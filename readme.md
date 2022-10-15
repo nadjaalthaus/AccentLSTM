@@ -6,7 +6,7 @@ This repository contains a collection of Jupyter notebooks to (a) extract pitch 
 (b) train an LSTM network to classify pitch patterns on the basis of grammatical assignment to Accent 1 or 2, and (c) visualise and explore
 the learned representation. The project is a work in progress.
 
-The speech corpus can be obtained from the [National Library of Norway] (https://www.nb.no/sprakbanken/en/resource-catalogue/oai-nb-no-sbr-56/).
+The speech corpus can be obtained from the [National Library of Norway](https://www.nb.no/sprakbanken/en/resource-catalogue/oai-nb-no-sbr-56/).
 
 [NSTcreate.ipynb](https://github.com/nadjaalthaus/AccentLSTM/blob/main/NSTcreate.ipynb) 
 Here we create a database of approx. 120,000 pitch accent patterns, from disyllabic nouns found in the NST corpus.

@@ -1,0 +1,180 @@
+---
+title: "NST pitch preprocessing"
+author: "Nadja Althaus"
+date: "14/02/2022"
+output: html_document
+---
+
+In this file we normalise and smooth pitch contours of disyllabic nouns extracted from the NST corpus.
+The aim is to assimilate Nencheva's (2020) treatment of pitch contours.
+This involves Tukey's median smoothing, then identifying the 30 'most interesting' points (Nencheva, 2020), which are the points with the largest slope change between consecutive time slots. Note that while Nencheva used 10 such points, we get better results with 30 points for the present task, perhaps because Acc2 contours are more complex.
+The pitch contours are interpolated between these 'most interesting' points, and normalized to deal with absolute pitch height differences.
+
+
+
+```{r libraries}
+library(ggplot2)
+library(stringr)
+library(stats)
+library(zoo)
+
+```
+
+```{r load.data}
+
+
+NSTData=read.csv("PitchDF.csv", fileEncoding='iso-8859-1',  header=TRUE, stringsAsFactors=FALSE)
+
+```
+
+```{r read.pitch.file}
+
+
+
+read_pitch <- function(pitchfilename){
+  # read the pitch from an output file of praat f0 extraction script
+  # parameters:
+  # pitchfilename - .txt file holding pitch info
+  
+  
+  #need to skip 2 lines that hold info
+  tryCatch({
+  pitchdata=read.csv(pitchfilename,sep=" ", skip=2, col.names = c("t","p"), fill=TRUE, stringsAsFactors=FALSE , header=FALSE)
+  
+  
+  #then break down info from first 2 lines: start/end timestamps in format startt--endt and number of samples
+  pfile <- file(pitchfilename,"r")
+  start_end <- readLines(pfile,n=1)
+  vals=strsplit(start_end, '--')
+  
+  startt=vals[[1]][1]
+  endt=vals[[1]][2]
+  nsamples <-readLines(pfile,n=1)
+  close(pfile)
+  outlist=list(startt,endt, nsamples, pitchdata)
+  return(outlist)
+  }, error=function(e){return(list())})
+}
+
+
+```
+
+
+```{r prep.functions}
+
+
+clip_na <- function(mylist){
+  #remove leading and trailing NA slots
+  non_na_idx=which(!is.na(mylist))
+  removed_leading=mylist[non_na_idx[1]:length(mylist)]
+  non_na_idx=which(!is.na(removed_leading))
+  removed_trailing=removed_leading[1:non_na_idx[length(non_na_idx)]]
+  return(removed_trailing)
+}
+
+
+
+find_informative_points <- function(pitchlist, n){
+  #returns the n points with the largest change in slope between consecutive items
+
+  x2=1:length(pitchlist)
+  x1=append(NA, 1:(length(pitchlist)-1))
+  y2=pitchlist
+  y1=append(NA,pitchlist[1:length(pitchlist)-1])
+  diffy=y2-y1
+  diffx=x2-x1
+  #div will contain pairwise slopes between adjacent points
+  div=diffy/diffx
+  div2=append(NA,div[1:length(div)-1])#shifted
+  diffdiv=abs(div2-div)
+  
+  #get indices of div sorted by slope, then reverse to get the 10 points with lowest slope
+  odiffdiv=rev(order(diffdiv))
+  returnlist=sort(odiffdiv[1:n])
+  if (length(returnlist)>length(pitchlist)){
+    returnlist=returnlist[1:length(pitchlist)]
+  }
+  return(returnlist)
+                          
+  
+}
+
+
+
+
+```
+
+
+```{r final.prepFunction}
+
+
+
+prepPitch <- function (pitchdata, npoints){
+  #puts all prep steps together
+  #removes leading/trailing NA
+  #followed by smoothing, identifying the n most interesting points, interpolation around these, and 
+  #normalisation
+  clipped_pitch=clip_na(pitchdata$p)
+  nsamp=length(clipped_pitch)
+  smooth_pitch=smooth(na.approx(clipped_pitch))
+  informative_idx=find_informative_points(smooth_pitch, npoints)
+  informative_y=smooth_pitch[informative_idx]
+  x_scaled=round(((informative_idx)/nsamp)*30)
+  
+  y_interpolate=rep(NA,30)
+  y_interpolate[x_scaled]=informative_y
+  
+  if (is.na(y_interpolate[1])){
+    y_interpolate[1]=smooth_pitch[1]
+  }
+  if (is.na(y_interpolate[length(y_interpolate)])){
+    y_interpolate[length(y_interpolate)]=smooth_pitch[length(smooth_pitch)]
+  }
+  y_interpolate=smooth(na.approx(y_interpolate))
+  
+  mn=min(y_interpolate)
+  mx=max(y_interpolate)-mn
+  y_interpolate=(y_interpolate-mn)/mx
+  
+
+  return(y_interpolate)
+}
+
+
+```
+
+```{r}
+
+#process the entire pitch file corpus
+PitchArray=array(dim=c(dim(NSTData)[1],30))
+for (i in 1:dim(NSTData)[1]){
+  print(i)
+  
+  pitchfilename=NSTData$PitchFile[i]
+  print(pitchfilename)
+  pitch=read_pitch(pitchfilename)
+
+  
+  pitchdata=pitch[[4]]
+  if (sum(is.na(pitchdata))==dim(pitchdata)[1]){
+    print('Does not have pitch data')
+    next
+  }
+  smoothpitch <-prepPitch(pitchdata, 20)
+  
+  PitchArray[i,]=smoothpitch
+  
+}
+```
+
+```{r AddToSvenskData}
+for (i in 1:30){
+ NSTData[paste0('S',i, sep="")]=PitchArray[,i]
+  
+}
+
+
+
+```
+
+

@@ -168,15 +168,15 @@ def check_julius(wavfilelist):
 
 
 def prep_wav(wavlist):
-     """
-            converts wavfiles given in wavlist to format compatible with Julius recogniser
-            __________
-            Parameters:
-                wavlist: a list of wav filenames
-    
+    """
+             converts wavfiles given in wavlist to format compatible with Julius recogniser
+             __________
+             Parameters:
+                 wavlist: a list of wav filenames
 
 
-            """
+
+             """
 
     import soundfile as sf
     i=0

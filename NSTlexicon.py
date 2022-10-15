@@ -31,29 +31,29 @@ def strip_punctuation(s):
 
 
 def read_lexicon(lexfile='swe030224NST.csv', maxentries=0):
-         """
-        Reads the NST lexicon from input csv file 
-              
-        Parameters
-        ----------
-        lexfile : csv file name (NST lexicon)
-
-        maxentries : max number of items read from the top of the file,
-                    is ignored if 0
-
-        Returns
-        ----------
-        Lemma (list of str): lexical entries, includes morphological forms as separate entries
-        PosDict (dict, key: str, val: str or list): keys: Lemma, values: corresponding part of speech tag or list, e.g. 'NN', or ['NN','VB']
-        MorphDict (dict, key: str, val: str or list): keys: Lemma, values: morphological tags
-        PhonDict (dict, key: str, val: str) keys: Lemma, values: phonological transcript
-        NumSyllDict (dict, key: str, val: int): keys: Lemma, values number of syllables
-        SyllDict (dict, key: str, val: list of str): keys: Lemma, values: list of syllable transcripts, e.g. ['""A:', 'pa'] for 'apa'
-        AccentDict(dict, key: str, val: list of int): keys: Lemma, values: list of int with one value per syllable (unstressed = 0), e.g. disyllabic Accent 2 is [2,0], disyllabic Accent 1 is [1,0]
-        DecompDict(dict, key: str, val: str):keys: Lemma, values: str indicating morphological decomposition, morpheme boundaries indicated with '+', e.g. sjukhus -> 'sjuk+hus'
-        BaseDict (dict, key: str, val: str):keys: Lemma, values: base lexical entry, e.g. apan -> apa
-        SemDict (dict, key: str, val: int):keys: Lemma, values: semantic ID code
     """
+            Reads the NST lexicon from input csv file
+
+            Parameters
+            ----------
+            lexfile : csv file name (NST lexicon)
+
+            maxentries : max number of items read from the top of the file,
+                        is ignored if 0
+
+            Returns
+            ----------
+            Lemma (list of str): lexical entries, includes morphological forms as separate entries
+            PosDict (dict, key: str, val: str or list): keys: Lemma, values: corresponding part of speech tag or list, e.g. 'NN', or ['NN','VB']
+            MorphDict (dict, key: str, val: str or list): keys: Lemma, values: morphological tags
+            PhonDict (dict, key: str, val: str) keys: Lemma, values: phonological transcript
+            NumSyllDict (dict, key: str, val: int): keys: Lemma, values number of syllables
+            SyllDict (dict, key: str, val: list of str): keys: Lemma, values: list of syllable transcripts, e.g. ['""A:', 'pa'] for 'apa'
+            AccentDict(dict, key: str, val: list of int): keys: Lemma, values: list of int with one value per syllable (unstressed = 0), e.g. disyllabic Accent 2 is [2,0], disyllabic Accent 1 is [1,0]
+            DecompDict(dict, key: str, val: str):keys: Lemma, values: str indicating morphological decomposition, morpheme boundaries indicated with '+', e.g. sjukhus -> 'sjuk+hus'
+            BaseDict (dict, key: str, val: str):keys: Lemma, values: base lexical entry, e.g. apan -> apa
+            SemDict (dict, key: str, val: int):keys: Lemma, values: semantic ID code
+        """
     
     #returns Lemma, PosDict, MorphDict, PhonDict, NumSyllDict, SyllDict, AccentDict, DecompDict, BaseDict, SemDict
 
@@ -292,23 +292,23 @@ def read_lexicon(lexfile='swe030224NST.csv', maxentries=0):
             
             
             
-    return Lemma, PosDict, MorphDict, PhonDict, NumSyllDict, SyllDict, AccentDict, DecompDict, BaseDict, SemDict, SemInfo
+    return Lemma, PosDict, MorphDict, PhonDict, NumSyllDict, SyllDict, AccentDict, DecompDict, BaseDict, SemDict
 
 
 
 
 def lookUp(word, Lemma, PosDict, MorphDict, PhonDict, NumSyllDict, SyllDict, AccentDict, DecompDict, BaseDict):
-      """
-        Lexicon lookup for 'word'
-        Prints information to std out
-              
-        Parameters
-        ----------
-        Lemma, PosDict, MorphDict, PhonDict, NumSyllDict, SyllDict, AccentDict, DecompDict, BaseDict - outputs from read_lexicon()
+    """
+            Lexicon lookup for 'word'
+            Prints information to std out
 
-        Returns
-        ----------
-     """  
+            Parameters
+            ----------
+            Lemma, PosDict, MorphDict, PhonDict, NumSyllDict, SyllDict, AccentDict, DecompDict, BaseDict - outputs from read_lexicon()
+
+            Returns
+            ----------
+         """
     print('****\nLooking up '+word+':')
     print('POS:\t'+ str(PosDict[word]))
     print('Morph:\t'+ str(MorphDict[word]))
@@ -327,18 +327,18 @@ def lookUp(word, Lemma, PosDict, MorphDict, PhonDict, NumSyllDict, SyllDict, Acc
 
 
 def TokenFrequencies(Transcripts):
-     """
-        get token frequency counts for a set of transcripts
-              
-        Parameters
-        ----------
-        Transcripts - list of str: list of sentences, NST transcripts (without <s> tags)
+    """
+            get token frequency counts for a set of transcripts
 
-        Returns
-        ----------
-        TokenFreq: Counter
-        indicates number of occurrences of each token in Transcripts
-     """  
+            Parameters
+            ----------
+            Transcripts - list of str: list of sentences, NST transcripts (without <s> tags)
+
+            Returns
+            ----------
+            TokenFreq: Counter
+            indicates number of occurrences of each token in Transcripts
+         """
     C = []
     for t in Transcripts:
         tStripped = strip_punctuation(t)

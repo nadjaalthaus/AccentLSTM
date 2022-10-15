@@ -14,6 +14,7 @@ import os, re, subprocess
 ######################
 
 from string import punctuation
+
 def strip_punctuation(s):
     return ''.join(c for c in s if c not in punctuation)
 
@@ -28,24 +29,24 @@ def strip_punctuation(s):
 
 
 def read_corpus_raw(topdirlist):
-     """
-        read corpus, transcript by transcript, from nested NST file structure
-       
-              
-        Parameters
-        ----------
-        topdirlist: list of str - directories that are going to be searched for wav and transcript files
+    """
+            read corpus, transcript by transcript, from nested NST file structure
 
-        Returns
-        ----------
-        NSTwavfilenames: list of full paths to wav file names in directories given in topdirlist
-        NSTtranscripts: list of full paths to transcript (txt) files, length is same as NSTwavfilenames
-        NSTregionofyouth: for each item in wavfilenames/NSTtranscripts, indicate the region of youth of the speaker
-        
-     """  
-    
 
-    # build the directory structure
+            Parameters
+            ----------
+            topdirlist: list of str - directories that are going to be searched for wav and transcript files
+
+            Returns
+            ----------
+            NSTwavfilenames: list of full paths to wav file names in directories given in topdirlist
+            NSTtranscripts: list of full paths to transcript (txt) files, length is same as NSTwavfilenames
+            NSTregionofyouth: for each item in wavfilenames/NSTtranscripts, indicate the region of youth of the speaker
+
+         """
+
+
+# build the directory structure
 
     NSTwavfilenames = []
     NSTtranscripts = []
@@ -140,23 +141,23 @@ def read_corpus_raw(topdirlist):
 
 
 def findwav(Types,Transcripts,Wavfiles, type2trans=True):
-     """
-        create a dictionary type --> wavfiles containing that word (type)
-       
-              
-        Parameters
-        ----------
-           Types: list of str, target words
-           Transcripts: list of str, transcripts from NST
-           Wavfiles: list of str, wav file names
-           type2trans: boolean flag that will trigger construction of a second dictionary if True, type2trans
+    """
+            create a dictionary type --> wavfiles containing that word (type)
 
-        Returns
-        ----------
-        type2wav - a dictionary mapping words to a list of wavfiles containing that word
-        type2trans - a dictionary mapping words to a list of transcripts containing that word
-        
-     """  
+
+            Parameters
+            ----------
+               Types: list of str, target words
+               Transcripts: list of str, transcripts from NST
+               Wavfiles: list of str, wav file names
+               type2trans: boolean flag that will trigger construction of a second dictionary if True, type2trans
+
+            Returns
+            ----------
+            type2wav - a dictionary mapping words to a list of wavfiles containing that word
+            type2trans - a dictionary mapping words to a list of transcripts containing that word
+
+         """
     index={}
     for i in range(len(Transcripts)):
         tStripped = strip_punctuation(Transcripts[i])
